@@ -1,9 +1,12 @@
+import {config} from 'dotenv'
+config()
+
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export const chatApi = createApi({
     reducerPath: 'chatApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${process.env.HOST_SERVER}/chat`
+        baseUrl: `https://chat-x8ru.onrender.com/chat`
     }),
     endpoints: (builder) => ({
         getAllChats: builder.mutation({
