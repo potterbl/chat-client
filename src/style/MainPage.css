@@ -1,0 +1,28 @@
+.main-page{
+    display: grid;
+    width: 100vw;
+    height: 100svh;
+    grid-template-columns: minmax(200px, 300px) minmax(300px, auto);
+}
+.main-page__left{
+    width: 100%;
+    height: 100%;
+    background-color: #868686;
+}
+.main-page__right{
+    width: 100%;
+    height: 100%;
+}
+.leave-account{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background-image: url('../images/logout.png');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+}
