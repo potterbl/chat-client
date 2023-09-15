@@ -38,7 +38,7 @@ const MainPage = () => {
     }
 
     useEffect(() => {
-        const socket = io('http://localhost:5000')
+        const socket = io(process.env.HOST)
         const uid = localStorage.getItem('UID')
 
         socket.on('connect', () => {
