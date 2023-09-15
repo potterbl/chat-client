@@ -38,7 +38,7 @@ const MainPage = () => {
     }
 
     useEffect(() => {
-        const socket = io('https://chat-x8ru.onrender.com/chat')
+        const socket = io('https://chat-x8ru.onrender.com/')
         const uid = localStorage.getItem('UID')
 
         socket.on('connect', () => {

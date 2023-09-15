@@ -31,10 +31,14 @@ const Chats = () => {
                                             {user.name}
                                         </p>
                                         <p className="chat-user__message">
-                                            {users
-                                                ? users.find(user => user.id === chat.messages[chat.messages.length - 1].from).name + ': ' + chat.messages[chat.messages.length - 1].message
-                                                : null
+                                            {
+                                                chat.messages && chat.messages.length && users.length && chat.messages[chat.messages.length - 1] ? (
+                                                    <p className="chat-user__message">
+                                                        {users.find(user => user.id === chat.messages[chat.messages.length - 1].from).name + ': ' + chat.messages[chat.messages.length - 1].message}
+                                                    </p>
+                                                ) : null
                                             }
+
                                         </p>
                                     </div>
                                 )
