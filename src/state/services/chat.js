@@ -1,6 +1,3 @@
-import {config} from 'dotenv'
-config()
-
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export const chatApi = createApi({
