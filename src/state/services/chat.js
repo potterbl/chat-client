@@ -3,7 +3,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const chatApi = createApi({
     reducerPath: 'chatApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${process.env.HOST}/chat`
+        baseUrl: `${process.env.HOST_SERVER}/chat`
     }),
     endpoints: (builder) => ({
         getAllChats: builder.mutation({
