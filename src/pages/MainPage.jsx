@@ -6,13 +6,16 @@ import {useGetAllChatsMutation} from "../state/services/chat";
 import {io} from "socket.io-client";
 import Chats from "../components/Chats";
 import CreateChat from "../components/CreateChat";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setUsers} from "../state/slices/users.slice";
 import {setChats} from "../state/slices/chats.slice";
 import Chat from "../components/Chat";
+import LeaveAccountButton from "../components/LeaveAccountButton";
 
 const MainPage = () => {
     const dispatch = useDispatch()
+
+    const currentChat = useSelector(state => state.chats.current)
 
     const navigate = useNavigate()
 
@@ -38,7 +41,7 @@ const MainPage = () => {
     }
 
     useEffect(() => {
-        const socket = io('https://chat-x8ru.onrender.com/')
+        const socket = io('http://localhost:5000/')
         const uid = localStorage.getItem('UID')
 
         socket.on('connect', () => {
@@ -78,20 +81,25 @@ const MainPage = () => {
     }, [])
     return (
         <div className="main-page">
-            <div className="main-page__left">
-                <CreateChat/>
-                <Chats/>
-            </div>
-            <div className="main-page__right">
-                <Chat/>
-            </div>
-            <button className="leave-account"
-                onClick={() => {
-                    localStorage.removeItem('token')
-                    window.location.reload()
-                }}
-            >
-            </button>
+            {
+                window.innerWidth > 450 || currentChat === -1 ?
+                    <div className="main-page__left">
+                        <CreateChat/>
+                        <Chats/>
+                    </div>
+                    : null
+            }
+            {
+                window.innerWidth > 450 || currentChat !== -1 ?
+                    <>
+                        <div className="main-page__right">
+                            <Chat/>
+                        </div>
+                        <LeaveAccountButton/>
+                    </>
+                    : null
+            }
+
         </div>
     );
 };

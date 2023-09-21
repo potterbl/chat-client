@@ -1,16 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../style/Chat.css'
 import {useDispatch, useSelector} from "react-redux";
-import {setCurrentChat} from "../state/slices/chats.slice";
 import {useSendMessageMutation} from "../state/services/chat";
+import {setCurrentChat} from "../state/slices/chats.slice";
 
 const Chat = () => {
     const dispatch = useDispatch()
 
     const chatRef = useRef(null)
+    const inputRef = useRef(null)
 
     const chatWith = useSelector(state => state.chats.current)
     const chats = useSelector(state => state.chats.all)
+    const users = useSelector(state => state.users)
 
     const chat = chats.find(chat => chat.id === chatWith)
 
@@ -33,6 +35,18 @@ const Chat = () => {
         }
     }
 
+    const autoResize = () => {
+        if(inputRef.current){
+            const input = inputRef.current;
+            input.style.height = '18px';
+            input.style.height = Math.min(input.scrollHeight, 52) + 'px';
+        }
+    }
+
+    useEffect(() => {
+        autoResize()
+    }, [message])
+
     useEffect(() => {
         if (chat && chat.messages && chat.messages.length > 0) {
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -42,84 +56,73 @@ const Chat = () => {
 
     return (
         <>
-        {
-            chat ?
-                <div className="chat">
-                    <div className="chat-header">
-                        <button
-                            className="chat-header__button"
-                            onClick={() => {
-                                dispatch(setCurrentChat(-1))
-                            }}
-                        >
-                            <svg
-                                width="100%"
-                                height="100%"
+            <div className="chat">
+                <div className="chat-header">
+                    {
+                        chat ?
+                            <button
+                                onClick={() => {
+                                    dispatch(setCurrentChat(-1))
+                                }}
+                                className="chat-header__back-button"
                             >
-                                <line
-                                    x1="50%" y1="0"
-                                    x2="0" y2="50%"
-                                    strokeWidth={2}
-                                    stroke="white"
-                                />
-                                <line
-                                    x1="0" y1="50%"
-                                    x2="50%" y2="100%"
-                                    strokeWidth={2}
-                                    stroke="white"
-                                />
-                                <line
-                                    x1="0" y1="50%"
-                                    x2="100%" y2="50%"
-                                    strokeWidth={2}
-                                    stroke="white"
-                                />
-                            </svg>
-                        </button>
-                        <p>
-                            {chat.users
-                                .filter(user => user.id !== parseInt(localStorage.getItem('UID')))
-                                .map(user => user.name)
-                                .join(', ')}
-                        </p>
-                    </div>
-                    <div className="chat-body" ref={chatRef}>
+
+                            </button>
+                            :null
+                    }
+                    <p className="chat-header__username">
                         {
-                            chat.messages && chat.messages.map(message => (
-                                <div
-                                    className='message'
-                                    style={{alignSelf: message.from !== uid ? 'flex-start' : 'flex-end'}}
-                                >
-                                    {message.message}
-                                </div>
-                            ))
+                            users.length ?
+                                users.map(user => {
+                                    return user.id === uid ? user.name : null
+                                })
+                                : null
                         }
-                    </div>
-                    <div className="chat-footer">
-                        <input
-                            type="text"
-                            className="chat-footer__input"
-                            placeholder="Enter your message"
+                    </p>
+                </div>
+                {
+                    chat ?
+                        <>
+                            <div className="chat-body" ref={chatRef}>
+                                {
+                                    chat.messages ?
+                                    chat.messages.map((message, index) => (
+                                        <div
+                                            key={index}
+                                            className={`message-box ${message.from === uid ? 'message-box__me' : null}`}
+                                        >
+                                            <p className={`message-text ${message.from === uid ? 'message-text__me' : null}`}>{message.message}</p>
+                                        </div>
+                                    ))
+                                        :null
+                                }
+                            </div>
+                            <div className="chat-footer">
+                                <div className="chat-footer__input-outer">
+                        <textarea
+                            placeholder="Input your message"
                             value={message}
-                            onChange={(e) => {
-                                setMessage(e.target.value)
-                            }}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="chat-footer__input-inner"
+                            ref={inputRef}
                             onKeyDown={(key) => {
-                                if(key.code === "Enter") {
+                                if (key.code === "Enter") {
                                     handleSendMessage()
                                 }
                             }}
                         />
-                        <button
-                            className="chat-footer__button"
-                            onClick={() => handleSendMessage()}
-                        >
+                                    <button
+                                        className="chat-footer__input-button"
+                                        onClick={() => handleSendMessage()}
+                                    >
 
-                        </button>
-                    </div>
-                </div>
-                : null
-        }
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                        : null
+                }
+            </div>
         </>
     );
 };

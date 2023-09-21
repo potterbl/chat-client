@@ -89,14 +89,14 @@ const CreateChat = () => {
                                     <line
                                         x1="0" y1="0"
                                         x2="100%" y2="100%"
-                                        stroke="black"
+                                        stroke="white"
                                         strokeWidth="2"
                                         strokeLinecap="capp"
                                     />
                                     <line
                                         x1="100%" y1="0"
                                         x2="0" y2="100%"
-                                        stroke="black"
+                                        stroke="white"
                                         strokeWidth="2"
                                         strokeLinecap="capp"
                                     />
@@ -123,6 +123,7 @@ const CreateChat = () => {
                                             }}
                                         >
                                             {user.name}
+
                                         </button>
                                     ))
                                 }
@@ -132,15 +133,16 @@ const CreateChat = () => {
                 </div>
             }
 
-            <button
-                className="chat-create__button"
-                onClick={() => {
-                    setIsDialog(true)
-                }}
-            >
-                create chat
-            </button>
-
+            <div className="create-chat">
+                <button
+                    className="chat-create__button"
+                    onClick={() => {
+                        setIsDialog(true)
+                    }}
+                >
+                    New chat
+                </button>
+            </div>
         </>
     );
 };

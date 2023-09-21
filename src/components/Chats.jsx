@@ -7,52 +7,47 @@ const Chats = () => {
     const dispatch = useDispatch()
 
     const chats = useSelector(state => state.chats.all)
+    const currentChat = useSelector(state => state.chats.current)
     const users = useSelector(state => state.users)
     const id = localStorage.getItem('UID')
 
     return (
         <div className="chats">
-            {
-                chats.length > 0 ? chats.map((chat) => (
-                    <div
-                        className="chat-menu"
-                        onClick={() => {
-                            dispatch(setCurrentChat(chat.id))
-                        }}
-                    >
-                        {
-                            chat.users.map(user => (
-                                user.id !== parseInt(id) && (
-                                    <div
-                                        key={user.id}
-                                        className="chat-user"
-                                    >
-                                        <p className="chat-user__name">
-                                            {user.name}
+            <div className="chats-menu">
+                {
+                    chats.length && users.length ?
+                        chats.map(chat => (
+                            <button
+                                key={chat.id}
+                                className={`chats-menu__user ${currentChat === chat.id ? 'chats-menu__user-active' : null}`}
+                                onClick={() => {
+                                    dispatch(setCurrentChat(chat.id))
+                                }}
+                            >
+                                <p className="chat-menu__username">
+                                    {
+                                        chat.users.map(user => {
+                                            return user.id !== parseInt(id) ? user.name : null
+                                        })
+                                    }
+                                </p>
+                                {
+                                    chat.messages && chat.messages.length ?
+                                        <p className="chat-menu__info">
+                                            {chat.users.find(user => user.id === chat.messages[chat.messages.length - 1].from).name
+                                                +
+                                                ': '
+                                                +
+                                                chat.messages[chat.messages.length - 1].message}
                                         </p>
-                                        <p className="chat-user__message">
-                                            {
-                                                chat.messages && chat.messages.length && users.length && chat.messages[chat.messages.length - 1] ? (
-                                                    <p className="chat-user__message">
-                                                        {users.find(user => user.id === chat.messages[chat.messages.length - 1].from).name + ': ' + chat.messages[chat.messages.length - 1].message}
-                                                    </p>
-                                                ) : null
-                                            }
+                                        : null
+                                }
+                            </button>
+                        ))
+                        : <p>Here's no chats</p>
+                }
 
-                                        </p>
-                                    </div>
-                                )
-                            ))
-                        }
-                    </div>
-                ))
-                    :
-                    <div className="chat-empty">
-                        <h2 className="chat-menu__info">
-                            Here's no chats
-                        </h2>
-                    </div>
-            }
+            </div>
         </div>
     );
 };

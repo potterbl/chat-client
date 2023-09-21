@@ -1,0 +1,17 @@
+.leave-account{
+    z-index: 1;
+    position: absolute;
+    top: 14px;
+    right: 0;
+    width: 112px;
+    height: 48px;
+    border: 0;
+    background-image: url('../images/leave.svg');
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-color: transparent;
+    padding: 14px 12px;
+    color: white;
+    text-align: right;
+}
