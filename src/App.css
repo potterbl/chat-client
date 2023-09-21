@@ -11,6 +11,45 @@ body{
 button{
     cursor: pointer;
 }
-a{
-    text-decoration: none;
+.loading{
+    width: 100vw;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 66px;
+    padding: 0 20px;
+}
+.loader-logotype{
+    width: 46px;
+    height: 66px;
+}
+.loader{
+    max-width: 400px;
+    width: 100%;
+    min-width: 200px;
+    height: 10px;
+    background-color: #868686;
+    border-radius: 16px;
+    overflow: hidden;
+}
+.loader-inner{
+    height: 100%;
+    background-color: #c8c8c8;
+    animation: loading 12s linear forwards;
+}
+@keyframes loading {
+    0%{
+        width: 0;
+    }
+    35%{
+        width: 28%;
+    }
+    75%{
+        width: 83%;
+    }
+    100%{
+        width: 100%;
+    }
 }

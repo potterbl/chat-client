@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../style/MainPage.css'
 import {useNavigate} from "react-router-dom";
 import {useGetAllUsersQuery, useGetUserMutation} from "../state/services/user";
@@ -11,21 +11,60 @@ import {setUsers} from "../state/slices/users.slice";
 import {setChats} from "../state/slices/chats.slice";
 import Chat from "../components/Chat";
 import LeaveAccountButton from "../components/LeaveAccountButton";
+import logo from '../images/Subtract.svg'
 
 const MainPage = () => {
-    const dispatch = useDispatch()
+    const token = localStorage.getItem('token')
 
     const currentChat = useSelector(state => state.chats.current)
 
     const navigate = useNavigate()
 
-    const [getMe] = useGetUserMutation()
+    const dispatch = useDispatch()
+
     const [getChats] = useGetAllChatsMutation()
+    const [getMe] = useGetUserMutation()
+
+    const [socket, setSocket] = useState(null)
+
+    useEffect(() => {
+        const newSocket = io('https://chat-x8ru.onrender.com')
+        const uid = localStorage.getItem('UID')
+
+        newSocket.on('connect', () => {
+            console.log('connected')
+            getChatsHandler(token)
+            setSocket(newSocket)
+        })
+
+        newSocket.on(`user_${uid}`, (data) => {
+            console.log(data)
+            if(data){
+                const token = localStorage.getItem('token')
+                getChatsHandler(token)
+            }
+        })
+
+        return () => {
+            newSocket.disconnect()
+        }
+    }, [])
+
+    const getChatsHandler = async (token) => {
+        const res = await getChats({token})
+
+        if(res.data){
+            dispatch(setChats(res.data))
+        } else {
+            console.log(res.error)
+        }
+    }
+
     const {data: users} = useGetAllUsersQuery()
     dispatch(setUsers(users))
 
+
     const checkMe = async () => {
-        const token = localStorage.getItem('token')
         if(token){
             const res = await getMe({token})
 
@@ -41,44 +80,18 @@ const MainPage = () => {
     }
 
     useEffect(() => {
-        const socket = io('https://chat-x8ru.onrender.com')
-        const uid = localStorage.getItem('UID')
-
-        socket.on('connect', () => {
-            console.log('connected')
-        })
-
-        socket.on(`user_${uid}`, (data) => {
-            console.log(data)
-            if(data){
-                const token = localStorage.getItem('token')
-                getChatsHandler(token)
-            }
-        })
-
-        return () => {
-            socket.disconnect()
-        }
-    }, [])
-
-    const getChatsHandler = async (token) => {
-        const res = await getChats({token})
-
-        if(res.data){
-            dispatch(setChats(res.data))
-        } else {
-            console.log(res.error)
-        }
-    }
-
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        getChatsHandler(token)
-    }, [])
-
-    useEffect(() => {
         checkMe()
     }, [])
+
+    if(socket === null){
+        return <div className="loading">
+            <img src={logo} alt="logo" className="loader-logotype"/>
+            <div className="loader">
+                <div className="loader-inner"></div>
+            </div>
+        </div>
+    }
+
     return (
         <div className="main-page">
             {
