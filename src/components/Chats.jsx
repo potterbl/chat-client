@@ -44,7 +44,10 @@ const Chats = () => {
                                 }
                             </button>
                         ))
-                        : <p>Here's no chats</p>
+                        :
+                        <div className="chats-empty">
+                            <p>Here's no chats</p>
+                        </div>
                 }
 
             </div>

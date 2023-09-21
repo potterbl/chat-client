@@ -38,7 +38,7 @@ const CreateChat = () => {
 
     useEffect(() => {
         if(filter !== ''){
-            setResult(filteredUsers.filter(user => user.name.match(filter)))
+            setResult(filteredUsers.filter(user => user.name.toLowerCase().match(filter.toLowerCase())))
         } else {
             setResult(filteredUsers)
         }

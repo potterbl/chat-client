@@ -46,3 +46,11 @@
 .chats-menu__user-active{
     background-color: #282828;
 }
+.chats-empty{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white
+}
