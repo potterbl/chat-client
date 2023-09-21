@@ -15,6 +15,6 @@
 }
 @media(max-width: 500px){
     .main-page{
-        grid-template-columns: auto;
+        grid-template-columns: 100%;
     }
 }
