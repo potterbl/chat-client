@@ -61,6 +61,9 @@ const MainPage = () => {
     }
 
     const {data: users} = useGetAllUsersQuery()
+    if(!users.length){
+        window.location.reload()
+    }
     dispatch(setUsers(users))
 
 
