@@ -60,11 +60,17 @@ const MainPage = () => {
         }
     }
 
-    const {data: users} = useGetAllUsersQuery()
-    if(!users.length){
+    const {data: users, error} = useGetAllUsersQuery()
+    dispatch(setUsers(users))
+
+    if(!error){
+        if( users && !users.length){
+            window.location.reload()
+        }
+    } else {
+        localStorage.removeItem('token')
         window.location.reload()
     }
-    dispatch(setUsers(users))
 
 
     const checkMe = async () => {
