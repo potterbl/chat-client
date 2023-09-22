@@ -31,17 +31,17 @@ const MainPage = () => {
         const newSocket = io('https://chat-x8ru.onrender.com')
         const uid = localStorage.getItem('UID')
 
-        newSocket.on('connect', () => {
+        newSocket.on('connect', async () => {
             console.log('connected')
-            getChatsHandler(token)
+            await getChatsHandler(token)
             setSocket(newSocket)
         })
 
-        newSocket.on(`user_${uid}`, (data) => {
+        newSocket.on(`user_${uid}`, async (data) => {
             console.log(data)
             if(data){
                 const token = localStorage.getItem('token')
-                getChatsHandler(token)
+                await getChatsHandler(token)
             }
         })
 

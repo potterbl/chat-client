@@ -23,17 +23,20 @@ const Chat = () => {
     const uid = parseInt(localStorage.getItem('UID'))
 
     const handleSendMessage = async () => {
-        if(message !== ''){
-            const token = localStorage.getItem('token')
-            setMessage('')
+        if (message.trim() !== '') {
+            const token = localStorage.getItem('token');
+            setMessage('');
 
-            const res = await sendMessage({from: uid, message: message, chat: chatWith, token})
-            if(res.data){
+            const res = await sendMessage({ from: uid, message: message, chat: chatWith, token });
+            if (res.data) {
             } else {
-                console.log(res.error)
+                console.log(res.error);
             }
+        } else {
+            setMessage('');
         }
     }
+
 
     const autoResize = () => {
         if(inputRef.current){
@@ -105,9 +108,9 @@ const Chat = () => {
                             onChange={(e) => setMessage(e.target.value)}
                             className="chat-footer__input-inner"
                             ref={inputRef}
-                            onKeyDown={(key) => {
-                                if (key.code === "Enter") {
-                                    handleSendMessage()
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" && event.ctrlKey) {
+                                    handleSendMessage();
                                 }
                             }}
                         />
