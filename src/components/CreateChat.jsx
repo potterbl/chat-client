@@ -53,9 +53,9 @@ const CreateChat = () => {
         const token = localStorage.getItem('token')
 
         const usersId = [to, uid]
+        setIsDialog(false)
 
         const res = await createChat({usersId, token})
-        setIsDialog(false)
 
         if(res.data){
             dispatch(updateChats(res.data))
