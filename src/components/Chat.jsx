@@ -25,10 +25,10 @@ const Chat = () => {
     const handleSendMessage = async () => {
         if(message !== ''){
             const token = localStorage.getItem('token')
+            setMessage('')
 
             const res = await sendMessage({from: uid, message: message, chat: chatWith, token})
             if(res.data){
-                setMessage('')
             } else {
                 console.log(res.error)
             }

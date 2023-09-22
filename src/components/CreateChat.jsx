@@ -53,10 +53,10 @@ const CreateChat = () => {
         const usersId = [to, uid]
 
         const res = await createChat({usersId, token})
+        setIsDialog(false)
 
         if(res.data){
             dispatch(updateChats(res.data))
-            setIsDialog(false)
         } else {
             console.log(res.error)
         }
