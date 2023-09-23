@@ -1,8 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../style/Chat.css'
 import {useDispatch, useSelector} from "react-redux";
-import {useSendMessageMutation} from "../state/services/chat";
-import {setCurrentChat} from "../state/slices/chats.slice";
+import {useSeeMessageMutation, useSendMessageMutation} from "../state/services/chat";
+import {setCurrentChat, setReplying} from "../state/slices/chats.slice";
+
+import seen from '../images/seen.png'
+import tick from '../images/tick.png'
 
 const Chat = () => {
     const dispatch = useDispatch()
@@ -13,12 +16,16 @@ const Chat = () => {
     const chatWith = useSelector(state => state.chats.current)
     const chats = useSelector(state => state.chats.all)
     const users = useSelector(state => state.users)
+    const replying = useSelector(state => state.chats.replying)
 
     const chat = chats.find(chat => chat.id === chatWith)
 
     const [sendMessage] = useSendMessageMutation()
+    const [seeMessage] = useSeeMessageMutation()
 
     const [message, setMessage] = useState('')
+
+    const [visibleMessages, setVisibleMessages] = useState([])
 
     const uid = parseInt(localStorage.getItem('UID'))
 
@@ -26,8 +33,15 @@ const Chat = () => {
         if (message.trim() !== '') {
             const token = localStorage.getItem('token');
             setMessage('');
+            dispatch(setReplying(-1))
 
-            const res = await sendMessage({ from: uid, message: message, chat: chatWith, token });
+            const res = await sendMessage({
+                from: uid,
+                message: message,
+                chat: chatWith,
+                replied: replying !== -1 ? replying : null,
+                token
+            });
             if (res.data) {
             } else {
                 console.log(res.error);
@@ -36,6 +50,70 @@ const Chat = () => {
             setMessage('');
         }
     }
+
+    const isMessageVisible = (messageElement, chatContainer) => {
+        const messageRect = messageElement.getBoundingClientRect();
+        const containerRect = chatContainer.getBoundingClientRect();
+
+        return (
+            messageRect.top >= containerRect.top &&
+            messageRect.bottom <= containerRect.bottom
+        );
+    }
+
+    const handleSeeMessage = async (messageId) => {
+        const token = localStorage.getItem('token');
+
+        const res = await seeMessage({messageId, token})
+
+        if(res.data){
+            console.log(res.data)
+        } else {
+            console.log(res.error)
+        }
+    }
+
+    useEffect(() => {
+        const messageElements = document.querySelectorAll('.message-box');
+
+        messageElements.forEach((messageElement, index) => {
+            const message = chat.messages[index];
+            if (
+                isMessageVisible(messageElement, chatRef.current) &&
+                message.from !== uid &&
+                message.seen === false &&
+                !visibleMessages.includes(message.id)
+            ) {
+                handleSeeMessage(message.id);
+                setVisibleMessages([...visibleMessages, message.id]);
+            }
+        });
+
+        const scrollHandler = () => {
+            messageElements.forEach((messageElement, index) => {
+                const message = chat.messages[index];
+                if (
+                    isMessageVisible(messageElement, chatRef.current) &&
+                    message.from !== uid &&
+                    message.seen === false &&
+                    !visibleMessages.includes(message.id)
+                ) {
+                    handleSeeMessage(message.id);
+                    setVisibleMessages([...visibleMessages, message.id]);
+                }
+            });
+        };
+
+        if (chatRef.current) {
+            chatRef.current.addEventListener('scroll', scrollHandler);
+        }
+
+        return () => {
+            if (chatRef.current) {
+                chatRef.current.removeEventListener('scroll', scrollHandler);
+            }
+        };
+    }, [chat, visibleMessages]);
 
 
     const autoResize = () => {
@@ -71,7 +149,7 @@ const Chat = () => {
                             >
 
                             </button>
-                            :null
+                            : null
                     }
                     <p className="chat-header__username">
                         {
@@ -89,18 +167,61 @@ const Chat = () => {
                             <div className="chat-body" ref={chatRef}>
                                 {
                                     chat.messages ?
-                                    chat.messages.map((message, index) => (
-                                        <div
-                                            key={index}
-                                            className={`message-box ${message.from === uid ? 'message-box__me' : null}`}
-                                        >
-                                            <p className={`message-text ${message.from === uid ? 'message-text__me' : null}`}>{message.message}</p>
-                                        </div>
-                                    ))
-                                        :null
+                                        chat.messages.map((message, index) => (
+                                            <>
+                                                    {
+                                                        message.replied !== null ?
+                                                            <p className={`${message.from === uid ? 'message-reply__me' : ''} message-reply`}>
+                                                                {message.replied.message}
+                                                            </p>
+                                                            : null
+                                                    }
+                                                    <div
+                                                        key={index}
+                                                        className={`message-box ${message.from === uid ? 'message-box__me' : ''}`}
+                                                    >
+                                                            <p className={`message-text ${message.from === uid ? 'message-text__me' : ''}`}>{message.message}</p>
+
+                                                            <button
+                                                                className="reply-message"
+                                                                onClick={() => {
+                                                                    dispatch(setReplying(message.id))
+                                                                }}
+                                                            >
+
+                                                            </button>
+                                                            <img
+                                                                src={`${message.seen ? seen : tick}`}
+                                                                alt=""
+                                                                className="message-seen"
+                                                            />
+                                                    </div>
+                                            </>
+                                        ))
+                                        : null
                                 }
                             </div>
                             <div className="chat-footer">
+                                {
+                                    replying !== -1 ?
+                                        <div className="reply-box">
+                                            <div className="reply-box__inner">
+                                                <p className="reply-text">
+                                                    {
+                                                        chat.messages.find(message => message.id === replying).message
+                                                    }
+                                                </p>
+                                                <button
+                                                    className="reply-remove"
+                                                    onClick={() => {
+                                                        dispatch(setReplying(-1))
+                                                    }}
+                                                >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        : null
+                                }
                                 <div className="chat-footer__input-outer">
                         <textarea
                             placeholder="Input your message"

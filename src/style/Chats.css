@@ -17,8 +17,7 @@
     color: white;
     font-size: 14px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-between;
     background-color: transparent;
     border: 0;
     text-align: left;
@@ -29,6 +28,25 @@
     background-repeat: no-repeat;
     border-radius: 8px;
     transition: all .2s ease-in;
+}
+.chat-menu__left{
+    display: flex;
+    max-width: 100%;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+}
+.chat-unread{
+    height: 100%;
+    width: max-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chat-unread__count{
+    background-color: #868686;
+    padding: 4px 8px;
+    border-radius: 50%;
 }
 .chat-menu__username{
     max-width: 100%;

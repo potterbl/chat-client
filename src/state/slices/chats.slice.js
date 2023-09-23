@@ -4,7 +4,8 @@ export const chatsSlice = createSlice({
     name: 'chats',
     initialState: {
         all: [],
-        current: -1
+        current: -1,
+        replying: -1
     },
     reducers: {
         updateChats(state, action) {
@@ -18,8 +19,11 @@ export const chatsSlice = createSlice({
         },
         setCurrentChat(state,action){
             state.current = action.payload
+        },
+        setReplying(state, action) {
+            state.replying = action.payload
         }
     }
 })
 
-export const { updateChats, setChats, getChats, setCurrentChat } = chatsSlice.actions
+export const { updateChats, setChats, getChats, setCurrentChat, setReplying } = chatsSlice.actions

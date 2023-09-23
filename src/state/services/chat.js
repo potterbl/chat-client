@@ -21,13 +21,20 @@ export const chatApi = createApi({
             })
         }),
         sendMessage: builder.mutation({
-            query: ({from, chat, message, token}) => ({
+            query: ({from, chat, message, replied, token}) => ({
                 url: '/sendMessage',
                 method: 'POST',
-                body: {from, chat, message, token}
+                body: {from, chat, message, replied, token}
+            })
+        }),
+        seeMessage: builder.mutation({
+            query: ({messageId, token}) => ({
+                url: '/message',
+                method: 'PUT',
+                body: {messageId, token}
             })
         })
     })
 })
 
-export const { useGetAllChatsMutation, useCreateChatMutation, useSendMessageMutation } = chatApi
+export const { useGetAllChatsMutation, useCreateChatMutation, useSendMessageMutation, useSeeMessageMutation } = chatApi
