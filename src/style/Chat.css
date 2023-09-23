@@ -187,4 +187,10 @@
     .message-box{
         max-width: 70%;
     }
+    .message-reply{
+        max-width: 55%;
+    }
+    .reply-box{
+        padding: 0 20px;
+    }
 }
