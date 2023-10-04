@@ -45,6 +45,17 @@ const MainPage = () => {
             }
         })
 
+        newSocket.on('usersUpdate', async (data) => {
+            if(data) {
+                const {data: users} = useGetAllUsersQuery()
+                dispatch(setUsers(users))
+            }
+        })
+
+        newSocket.on('started', () => {
+            window.location.reload()
+        })
+
         return () => {
             newSocket.disconnect()
         }

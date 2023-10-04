@@ -6,11 +6,8 @@ export const usersSlice = createSlice({
     reducers: {
         setUsers (state, action) {
             return action.payload
-        },
-        getUsers (state, action) {
-            return state
         }
     }
 })
 
-export const {setUsers, getUsers} = usersSlice.actions
+export const {setUsers} = usersSlice.actions
